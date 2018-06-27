@@ -1,0 +1,25 @@
+###############
+#    folder   #
+###############
+.vs/
+**/packages/
+**/bin/
+**/obj/
+**/TestResults
+**/StyleCop.Cache
+**/node_modules/
+**/lib/
+
+###############
+#  temp file  #
+###############
+*.a
+*.log
+*.tmp
+*.vsprops
+*.suo
+*.user
+*.exe
+*.pdb
+*.dbmdl
+*.cache

