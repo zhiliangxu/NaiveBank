@@ -8,48 +8,52 @@
     <button id="btn-transfer">Transfer money</button>
     <button id="btn-validate">Validate anti-forgery token</button>
     <p>Antiforgery token: <span id="antiforgery-token" /></p>
+    <p>Validation result: <span id="validation-json" /></p>
     <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js"></script>
     <script type="text/javascript">
-$(function() {
-  $('#btn-antiforgery').click(function() {
-    $.ajax({
-      type: 'GET',
-      url: '/api/safe/antiforgerytoken',
-      xhrFields: {
-        withCredentials: true
-      },
-      success: function(data) { $('#antiforgery-token').text(data); }
-    });
-  });
+        $(function () {
+            $('#btn-antiforgery').click(function () {
+                $.ajax({
+                    type: 'GET',
+                    url: '/api/safe/antiforgerytoken',
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    success: function (data) { $('#antiforgery-token').text(data); }
+                });
+            });
 
-  $('#btn-transfer').click(function() {
-    $.ajax({
-      type: 'POST',
-      url: '/api/safe/transfer',
-      headers: {
-        'RequestVerificationToken': $('#antiforgery-token').text()
-      },
-      data: JSON.stringify({ from_account: 1, to_account: 2, amount: 1}),
-      contentType: 'application/json',
-      xhrFields: {
-        withCredentials: true
-      }
-    });
-  });
+            $('#btn-transfer').click(function () {
+                $.ajax({
+                    type: 'POST',
+                    url: '/api/safe/transfer',
+                    headers: {
+                        'RequestVerificationToken': $('#antiforgery-token').text()
+                    },
+                    data: JSON.stringify({ from_account: 1, to_account: 2, amount: 1 }),
+                    contentType: 'application/json',
+                    xhrFields: {
+                        withCredentials: true
+                    }
+                });
+            });
 
-  $('#btn-validate').click(function() {
-    $.ajax({
-      type: 'POST',
-      url: '/api/safe/validateantiforgerytoken',
-      headers: {
-        'RequestVerificationToken': $('#antiforgery-token').text()
-      },
-      xhrFields: {
-        withCredentials: true
-      }
-    });
-  });
-});
+            $('#btn-validate').click(function () {
+                $.ajax({
+                    type: 'POST',
+                    url: '/api/safe/validateantiforgerytoken',
+                    headers: {
+                        'RequestVerificationToken': $('#antiforgery-token').text()
+                    },
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    success: function (data) {
+                        $('#validation-json').text(JSON.stringify(data));
+                    }
+                });
+            });
+        });
     </script>
 </body>
 </html>

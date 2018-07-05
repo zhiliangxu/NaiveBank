@@ -60,6 +60,7 @@ namespace NaiveBank.Controllers
 
         [HttpPost("validateantiforgerytoken")]
         [CookieAuthorize]
+        [IgnoreAntiforgeryToken]
         public ActionResult<dynamic> ValidateAntiforgeryToken()
         {
             try
