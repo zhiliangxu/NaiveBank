@@ -15,7 +15,7 @@
             $('#btn-antiforgery').click(function () {
                 $.ajax({
                     type: 'GET',
-                    url: '/api/safe/antiforgerytoken',
+                    url: '/api/safebalances/antiforgerytoken',
                     xhrFields: {
                         withCredentials: true
                     },
@@ -26,11 +26,11 @@
             $('#btn-transfer').click(function () {
                 $.ajax({
                     type: 'POST',
-                    url: '/api/safe/transfer',
+                    url: '/api/safebalances/transfer',
                     headers: {
                         'RequestVerificationToken': $('#antiforgery-token').text()
                     },
-                    data: JSON.stringify({ from_account: 1, to_account: 2, amount: 1 }),
+                    data: JSON.stringify({ toAccount: 'eve', amount: 1 }),
                     contentType: 'application/json',
                     xhrFields: {
                         withCredentials: true
@@ -41,7 +41,7 @@
             $('#btn-validate').click(function () {
                 $.ajax({
                     type: 'POST',
-                    url: '/api/safe/validateantiforgerytoken',
+                    url: '/api/safebalances/validateantiforgerytoken',
                     headers: {
                         'RequestVerificationToken': $('#antiforgery-token').text()
                     },

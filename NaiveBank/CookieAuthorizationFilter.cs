@@ -15,10 +15,12 @@ namespace NaiveBank
         public void OnAuthorization(AuthorizationFilterContext context)
         {
             string authCookie = context.HttpContext.Request.Cookies["Auth"];
-            if (authCookie != "12344321")
+            if (string.IsNullOrWhiteSpace(authCookie))
             {
                 context.Result = new UnauthorizedResult();
             }
+
+            context.HttpContext.Items["User"] = authCookie;
         }
     }
 }

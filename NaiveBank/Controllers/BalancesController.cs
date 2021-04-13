@@ -7,62 +7,67 @@ namespace NaiveBank.Controllers
     [ApiController]
     public class BalancesController : ControllerBase
     {
-        private readonly static ConcurrentDictionary<int, decimal> balances = new ConcurrentDictionary<int, decimal>();
+        private readonly static ConcurrentDictionary<string, decimal> balances = new ConcurrentDictionary<string, decimal>();
 
         static BalancesController()
         {
-            balances.TryAdd(1, 100m);
-            balances.TryAdd(2, 0m);
+            balances.TryAdd("alice", 100);
+            balances.TryAdd("bob", 20);
+            balances.TryAdd("eve", 0);
         }
 
-        [HttpGet]
-        public ActionResult<ConcurrentDictionary<int, decimal>> Get()
+        [HttpGet()]
+        public ActionResult<ConcurrentDictionary<string, decimal>> GetAll()
         {
             return balances;
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("me")]
         [CookieAuthorize]
-        public ActionResult<decimal> Get(int id)
+        public ActionResult<string> Get()
         {
-            return balances[id];
+            string user = (string)this.HttpContext.Items["User"];
+            return $"{user}'s balance is: ${balances[user]}";
         }
 
         [HttpGet("transfer")]
         [CookieAuthorize]
-        public ActionResult<decimal> Get([FromQuery] int from, [FromQuery] int to, [FromQuery] decimal amount)
+        public ActionResult<string> Get([FromQuery] string to, [FromQuery] decimal amount)
         {
+            string from = (string)this.HttpContext.Items["User"];
             balances[from] -= amount;
             balances[to] += amount;
-            return balances[from];
+            return $"Successfully transferred ${amount} from {from} to {to}. Now {from}'s balance is ${balances[from]}";
         }
         
         [HttpPost("transfer")]
         [CookieAuthorize]
-        public ActionResult<decimal> Post([FromBody] TransferBalanceRequest request)
+        public ActionResult<string> Post([FromBody] TransferBalanceRequest request)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            balances[request.FromAccount] -= request.Amount;
+            string from = (string)this.HttpContext.Items["User"];
+            balances[from] -= request.Amount;
             balances[request.ToAccount] += request.Amount;
-            return balances[request.FromAccount];
+            return $"Successfully transferred ${request.Amount} from {from} to {request.ToAccount}. Now {from}'s balance is ${balances[from]}";
         }
 
-        [HttpPost("transfer2")]
+        [HttpPost("transferForm")]
         [CookieAuthorize]
-        public ActionResult<decimal> PostForm([FromForm] TransferBalanceRequest request)
+        public ActionResult<string> PostForm([FromForm] TransferBalanceRequest request)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            balances[request.FromAccount] -= request.Amount;
+            string from = (string)this.HttpContext.Items["User"];
+            balances[from] -= request.Amount;
             balances[request.ToAccount] += request.Amount;
-            return balances[request.FromAccount];
+            return $"Successfully transferred ${request.Amount} from {from} to {request.ToAccount}. Now {from}'s balance is ${balances[from]}";
         }
     }
 }

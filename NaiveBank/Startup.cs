@@ -1,10 +1,9 @@
-﻿using Microsoft.AspNetCore.Builder;
-
-using System;
+﻿using System;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace NaiveBank
 {
@@ -20,11 +19,11 @@ namespace NaiveBank
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddControllersWithViews();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -35,22 +34,22 @@ namespace NaiveBank
                 app.UseHsts();
             }
 
-            if (!string.IsNullOrWhiteSpace(Configuration.GetValue<string>("AllowedOrigin")))
+            if (!string.IsNullOrWhiteSpace(Configuration.GetValue<string>("Cors:AllowedOrigin")))
             {
                 app.UseCors(builder =>
                 {
-                    builder.WithOrigins(Configuration.GetValue<string>("AllowedOrigin"));
-                    if (!string.IsNullOrWhiteSpace(Configuration.GetValue<string>("AllowedMethods")))
+                    builder.WithOrigins(Configuration.GetValue<string>("Cors:AllowedOrigin"));
+                    if (!string.IsNullOrWhiteSpace(Configuration.GetValue<string>("Cors:AllowedMethods")))
                     {
-                        builder.WithMethods(Configuration.GetValue<string>("AllowedMethods").Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries));
+                        builder.WithMethods(Configuration.GetValue<string>("Cors:AllowedMethods").Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries));
                     }
 
-                    if (!string.IsNullOrWhiteSpace(Configuration.GetValue<string>("AllowedHeaders")))
+                    if (!string.IsNullOrWhiteSpace(Configuration.GetValue<string>("Cors:AllowedHeaders")))
                     {
-                        builder.WithHeaders(Configuration.GetValue<string>("AllowedHeaders").Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries));
+                        builder.WithHeaders(Configuration.GetValue<string>("Cors:AllowedHeaders").Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries));
                     }
 
-                    if (bool.TryParse(Configuration.GetValue<string>("AllowCredentials"), out bool allowCredentials) && allowCredentials)
+                    if (bool.TryParse(Configuration.GetValue<string>("Cors:AllowCredentials"), out bool allowCredentials) && allowCredentials)
                     {
                         builder.AllowCredentials();
                     }
@@ -58,8 +57,12 @@ namespace NaiveBank
             }
 
             app.UseHttpsRedirection();
+            app.UseRouting();
             app.UseStaticFiles();
-            app.UseMvc();
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
         }
     }
 }
