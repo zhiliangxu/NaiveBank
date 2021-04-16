@@ -12,7 +12,7 @@ namespace NaiveBank.Controllers
         private string password;
 
         [HttpGet("login")]
-        public ActionResult<string> LogIn(string user = "default")
+        public string LogIn(string user = "default")
         {
             this.Response.Cookies.Append(
                 "Auth",
@@ -30,7 +30,7 @@ namespace NaiveBank.Controllers
 
         [HttpGet("logout")]
         [CookieAuthorize]
-        public ActionResult<string> LogOut()
+        public string LogOut()
         {
             string user = (string)this.HttpContext.Items["User"];
             this.Response.Cookies.Delete("Auth");
@@ -40,7 +40,7 @@ namespace NaiveBank.Controllers
 
         [HttpGet("password")]
         [CookieAuthorize]
-        public ActionResult<string> GetPassword()
+        public string GetPassword()
         {
             if (this.password == null)
             {

@@ -59,7 +59,6 @@ namespace NaiveBank.Controllers
         public async Task<bool> ValidateAntiforgeryToken()
         {
            return await this.antiforgery.IsRequestValidAsync(this.HttpContext);
-
         }
     }
 }
