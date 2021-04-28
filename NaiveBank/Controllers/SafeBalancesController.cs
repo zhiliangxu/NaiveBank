@@ -6,9 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace NaiveBank.Controllers
 {
     [Route("api/[controller]")]
-    [ApiController]
     [AutoValidateAntiforgeryToken]
-    public class SafeBalancesController : ControllerBase
+    public class SafeBalancesController : Controller
     {
         private readonly static ConcurrentDictionary<string, decimal> balances = new ConcurrentDictionary<string, decimal>();
 
@@ -33,7 +32,7 @@ namespace NaiveBank.Controllers
 
         [HttpPost("transfer")]
         [CookieAuthorize]
-        public ActionResult<decimal> Post([FromBody] TransferBalanceRequest request)
+        public ActionResult<decimal> Transfer([FromBody] TransferBalanceRequest request)
         {
             if (!ModelState.IsValid)
             {

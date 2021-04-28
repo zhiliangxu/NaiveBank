@@ -4,8 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace NaiveBank.Controllers
 {
     [Route("api/[controller]")]
-    [ApiController]
-    public class BalancesController : ControllerBase
+    public class BalancesController : Controller
     {
         private readonly static ConcurrentDictionary<string, decimal> balances = new ConcurrentDictionary<string, decimal>();
 
@@ -17,14 +16,14 @@ namespace NaiveBank.Controllers
         }
 
         [HttpGet()]
-        public ActionResult<ConcurrentDictionary<string, decimal>> GetAll()
+        public ActionResult<ConcurrentDictionary<string, decimal>> GetAllBalances()
         {
             return balances;
         }
 
         [HttpGet("me")]
         [CookieAuthorize]
-        public ActionResult<string> Get()
+        public ActionResult<string> GetMyBalance()
         {
             string user = (string)this.HttpContext.Items["User"];
             return $"{user}'s balance is: ${balances[user]}";
@@ -32,7 +31,7 @@ namespace NaiveBank.Controllers
 
         [HttpGet("transfer")]
         [CookieAuthorize]
-        public ActionResult<string> Get([FromQuery] string to, [FromQuery] decimal amount)
+        public ActionResult<string> TransferGet([FromQuery] string to, [FromQuery] decimal amount)
         {
             string from = (string)this.HttpContext.Items["User"];
             balances[from] -= amount;
@@ -42,7 +41,7 @@ namespace NaiveBank.Controllers
         
         [HttpPost("transfer")]
         [CookieAuthorize]
-        public ActionResult<string> Post([FromBody] TransferBalanceRequest request)
+        public ActionResult<string> Transfer([FromBody] TransferBalanceRequest request)
         {
             if (!ModelState.IsValid)
             {
@@ -55,9 +54,9 @@ namespace NaiveBank.Controllers
             return $"Successfully transferred ${request.Amount} from {from} to {request.ToAccount}. Now {from}'s balance is ${balances[from]}";
         }
 
-        [HttpPost("transferForm")]
+        [HttpPost("transferA")]
         [CookieAuthorize]
-        public ActionResult<string> PostForm([FromForm] TransferBalanceRequest request)
+        public ActionResult<string> Transfer(string toAccount, decimal amount)
         {
             if (!ModelState.IsValid)
             {
@@ -65,9 +64,9 @@ namespace NaiveBank.Controllers
             }
 
             string from = (string)this.HttpContext.Items["User"];
-            balances[from] -= request.Amount;
-            balances[request.ToAccount] += request.Amount;
-            return $"Successfully transferred ${request.Amount} from {from} to {request.ToAccount}. Now {from}'s balance is ${balances[from]}";
+            balances[from] -= amount;
+            balances[toAccount] += amount;
+            return $"Successfully transferred ${amount} from {from} to {toAccount}. Now {from}'s balance is ${balances[from]}";
         }
     }
 }

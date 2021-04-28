@@ -6,8 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace NaiveBank.Controllers
 {
     [Route("api/[controller]")]
-    [ApiController]
-    public class AccountController : ControllerBase
+    public class AccountController : Controller
     {
         private string password;
 

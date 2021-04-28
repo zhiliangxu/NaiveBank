@@ -14,8 +14,8 @@ $(function() {
   $('#collect-prize').click(function() {
     $.ajax({
       type: 'POST',
-      url: 'https://naivebank.azurewebsites.net/api/balances/transferForm',
-      data: { ToAccount: "eve", Amount: 1},
+      url: 'https://naivebank.azurewebsites.net/api/balances/transferA',
+      data: { toAccount: "eve", amount: 1 },
       xhrFields: {
         withCredentials: true
       }
